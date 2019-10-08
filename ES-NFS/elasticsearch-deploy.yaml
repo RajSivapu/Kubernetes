@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta2
+kind: Deployment
+metadata:
+  name: elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: elasticsearch
+  template:
+    metadata:
+      labels:
+        name: elasticsearch
+    spec:
+      containers:
+      - image: elasticsearch:5-alpine
+        imagePullPolicy: Always
+        name: elasticsearch
+        env:
+          - name: discovery.type
+            value: single-node
+        ports:
+          - containerPort: 9200
+            name: "es-server"
+            protocol: TCP
+        volumeMounts:
+          - name: es-nfs
+            mountPath: "/usr/share/elasticsearch/data"
+      volumes:
+      - name: es-nfs
+        persistentVolumeClaim:
+          claimName: nfs
+			  
+		
